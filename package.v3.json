@@ -1,0 +1,55 @@
+{
+    "package_version": 2,
+    "name": "extensions_tools",
+    "version": "1.0.0",
+    "description": "Cross-version Cocos Creator extension",
+    "author": "Developer",
+    "editor": ">=3.0.0",
+    "main": "./dist/v3/main.js",
+    "scripts": {
+        "build": "npx tsc"
+    },
+    "devDependencies": {
+        "@cocos/creator-types": "^3.8.0",
+        "@types/node": "^18.17.1",
+        "typescript": "^5.0.0"
+    },
+    "panels": {
+        "default": {
+            "title": "Extensions Tools",
+            "type": "dockable",
+            "main": "./dist/v3/panels/default/index.js",
+            "size": {
+                "min-width": 400,
+                "min-height": 300,
+                "width": 600,
+                "height": 400
+            }
+        }
+    },
+    "contributions": {
+        "menu": [
+            {
+                "path": "i18n:menu.panel/Extensions Tools",
+                "label": "Open Panel",
+                "message": "open-panel"
+            },
+            {
+                "path": "i18n:menu.develop/Extensions Tools",
+                "label": "Say Hello",
+                "message": "say-hello"
+            }
+        ],
+        "messages": {
+            "open-panel": {
+                "methods": ["openPanel"]
+            },
+            "say-hello": {
+                "methods": ["sayHello"]
+            },
+            "clicked": {
+                "methods": ["clicked"]
+            }
+        }
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "name": "extensions_tools",
+    "version": "1.0.0",
+    "description": "Cross-version Cocos Creator extension",
+    "author": "Developer",
+    "main": "./dist/v2/main.js",
+    "main-menu": {
+        "i18n:MAIN_MENU.package.title/extensions_tools/open": {
+            "message": "extensions_tools:open"
+        },
+        "i18n:MAIN_MENU.package.title/extensions_tools/hello": {
+            "message": "extensions_tools:say-hello"
+        }
+    },
+    "panel": {
+        "main": "./dist/v2/panels/default/index.js",
+        "type": "dockable",
+        "title": "extensions_tools",
+        "width": 400,
+        "height": 300
+    }
+}
