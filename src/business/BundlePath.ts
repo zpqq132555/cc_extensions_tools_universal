@@ -86,7 +86,11 @@ export enum BundleName {${bundleStr}
 }
 /** 资源映射,插件自动生成,请勿修改 */
 export const AssetPath = ${JSON.stringify(this.bundleObj, null, 4)}`;
-        
+
+        const baseDir = path.join(this.editor.getProjectPath(), "assets", "scripts");
+        if (!fs.existsSync(baseDir)) {
+            fs.mkdirSync(baseDir, { recursive: true });
+        }
         getAsset().create('assets/scripts/BundleAssetsConfig.ts', newString);
 
         this.editor.log(this.logTitle, "生成路径映射成功");

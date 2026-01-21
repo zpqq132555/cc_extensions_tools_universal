@@ -25,6 +25,14 @@
     "inspector": {
         "asset.folder": "./dist/v2/asset_directory/index.v2.js"
     },
+    "contributions": {
+        "database": [
+            {
+                "name": "extensions_tools",
+                "path": "./assets"
+            }
+        ]
+    },
     "devDependencies": {
         "@types/node": "^18.17.1",
         "typescript": "^5.0.0"

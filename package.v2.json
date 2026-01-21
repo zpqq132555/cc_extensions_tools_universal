@@ -24,5 +24,13 @@
     },
     "inspector": {
         "asset.folder": "./dist/v2/asset_directory/index.v2.js"
+    },
+    "contributions": {
+        "database": [
+            {
+                "name": "extensions_tools",
+                "path": "./assets"
+            }
+        ]
     }
 }

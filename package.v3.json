@@ -74,5 +74,10 @@
                 "directory": "./dist/v3/asset_directory/index.js"
             }
         }
+    },
+    "asset-db": {
+        "mount": {
+            "path": "./assets"
+        }
     }
 }
