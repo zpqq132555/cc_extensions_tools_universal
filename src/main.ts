@@ -3,10 +3,8 @@
  * 这是一个兼容 v2.x 和 v3.x 的入口
  */
 
-import { BasePlugin, createPluginMain } from './index';
-
-// @ts-ignore
-import packageJSON from '../package.json';
+import { BundlePath } from './business/BundlePath';
+import { BasePlugin, createPluginMain, MessageMethod } from './index';
 
 /**
  * 主插件类
@@ -16,7 +14,7 @@ class ExtensionsToolsPlugin extends BasePlugin {
 
     constructor() {
         super();
-        this.pluginName = packageJSON.name || 'extensions_tools';
+        this.pluginName = 'extensions_tools';
     }
 
     load(): void {
@@ -29,21 +27,26 @@ class ExtensionsToolsPlugin extends BasePlugin {
         this.log(`${this.pluginName} unloaded.`);
     }
 
-    // V2.x 消息处理器
-    messages = {
-        'open': () => this.handleOpen(),
-        'say-hello': () => this.handleSayHello(),
-        'clicked': () => this.handleClicked(),
-    };
+    // // V2.x 消息处理器
+    // messages = {
+    //     'open': () => this.handleOpen(),
+    //     'say-hello': () => this.handleSayHello(),
+    //     'clicked': () => this.handleClicked(),
+    // };
 
-    // V3.x 方法处理器
-    methods = {
-        openPanel: () => this.handleOpen(),
-        sayHello: () => this.handleSayHello(),
-        clicked: () => this.handleClicked(),
-    };
+    // // V3.x 方法处理器
+    // methods = {
+    //     openPanel: () => this.handleOpen(),
+    //     sayHello: () => this.handleSayHello(),
+    //     clicked: () => this.handleClicked(),
+    // };
 
     // ==================== 业务逻辑 ====================
+    /** 生成 Bundle 路径映射 */
+    @MessageMethod
+    private bundlePath(): void {
+        BundlePath.run();
+    }
 
     private handleOpen(): void {
         this.log('Opening panel...');
@@ -52,7 +55,7 @@ class ExtensionsToolsPlugin extends BasePlugin {
 
     private handleSayHello(): void {
         this.log('Hello from Extensions Tools!');
-        
+
         // 发送消息到面板
         if (this.isV2) {
             this.sendToPanel(this.pluginName, `${this.pluginName}:hello`);

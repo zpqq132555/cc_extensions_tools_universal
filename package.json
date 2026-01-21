@@ -3,19 +3,37 @@
     "version": "1.0.0",
     "description": "Cross-version Cocos Creator extension",
     "author": "Developer",
-    "main": "./dist/main.js",
+    "main": "./dist/v2/main.js",
+    "main-menu": {
+        "i18n:MAIN_MENU.package.title/extensions_tools/open": {
+            "message": "extensions_tools:open"
+        },
+        "i18n:MAIN_MENU.package.title/extensions_tools/hello": {
+            "message": "extensions_tools:say-hello"
+        },
+        "i18n:extensions_tools.develop/i18n:extensions_tools.bundlePath": {
+            "message": "extensions_tools:bundlePath"
+        }
+    },
+    "panel": {
+        "main": "./dist/v2/panels/default/index.js",
+        "type": "dockable",
+        "title": "extensions_tools",
+        "width": 400,
+        "height": 300
+    },
+    "inspector": {
+        "asset.folder": "./dist/v2/asset_directory/index.v2.js"
+    },
+    "devDependencies": {
+        "@types/node": "^18.17.1",
+        "typescript": "^5.0.0"
+    },
     "scripts": {
         "preinstall": "node ./scripts/install.js",
         "build": "npm run build:v2 && npm run build:v3",
         "build:v2": "npx tsc -p tsconfig.v2.json",
         "build:v3": "npx tsc -p tsconfig.v3.json",
         "watch": "npx tsc -w"
-    },
-    "devDependencies": {
-        "@types/node": "^18.17.1",
-        "typescript": "^5.0.0"
-    },
-    "engines": {
-        "node": ">=14.0.0"
     }
 }

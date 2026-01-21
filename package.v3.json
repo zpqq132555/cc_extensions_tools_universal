@@ -38,17 +38,40 @@
                 "path": "i18n:menu.develop/Extensions Tools",
                 "label": "Say Hello",
                 "message": "say-hello"
+            },
+            {
+                "path": "i18n:extensions_tools.develop",
+                "label": "i18n:extensions_tools.bundlePath",
+                "message": "bundlePath"
             }
         ],
         "messages": {
             "open-panel": {
-                "methods": ["openPanel"]
+                "methods": [
+                    "openPanel"
+                ]
             },
             "say-hello": {
-                "methods": ["sayHello"]
+                "methods": [
+                    "sayHello"
+                ]
             },
             "clicked": {
-                "methods": ["clicked"]
+                "methods": [
+                    "clicked"
+                ]
+            },
+            "bundlePath": {
+                "methods": [
+                    "bundlePath"
+                ]
+            }
+        }
+    },
+    "inspector": {
+        "section": {
+            "asset": {
+                "directory": "./dist/v3/asset_directory/index.js"
             }
         }
     }

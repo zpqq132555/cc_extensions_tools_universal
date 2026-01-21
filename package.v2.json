@@ -10,6 +10,9 @@
         },
         "i18n:MAIN_MENU.package.title/extensions_tools/hello": {
             "message": "extensions_tools:say-hello"
+        },
+        "i18n:extensions_tools.develop/i18n:extensions_tools.bundlePath": {
+            "message": "extensions_tools:bundlePath"
         }
     },
     "panel": {
@@ -18,5 +21,8 @@
         "title": "extensions_tools",
         "width": 400,
         "height": 300
+    },
+    "inspector": {
+        "asset.folder": "./dist/v2/asset_directory/index.v2.js"
     }
 }

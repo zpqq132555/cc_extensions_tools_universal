@@ -58,7 +58,8 @@ export class AssetAdapterV2 implements IAssetAdapter {
 
     async create(path: string, content: string): Promise<void> {
         return new Promise((resolve, reject) => {
-            Editor.assetdb.create(path, content, (error: any) => {
+            const dbPath = path.startsWith('db://') ? path : `db://${path}`;
+            Editor.assetdb.create(dbPath, content, (error: any) => {
                 if (error) {
                     reject(error);
                 } else {

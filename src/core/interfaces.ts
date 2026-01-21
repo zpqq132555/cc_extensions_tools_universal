@@ -57,6 +57,8 @@ export interface IPanelAdapter {
 }
 
 export interface IPanelHandlers {
+    /** DOM 元素引用 (运行时由框架注入) */
+    $?: { [key: string]: HTMLElement | null };
     /** 面板准备就绪 */
     ready?(): void;
     /** 面板关闭前 */
