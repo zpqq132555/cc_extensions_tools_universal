@@ -30,8 +30,11 @@ extensions_tools_universal/
 │   │       ├── editor-adapter.ts   # v3.x Editor API 适配器
 │   │       ├── panel-adapter.ts    # v3.x Panel 适配器
 │   │       └── ipc-adapter.ts      # v3.x IPC 适配器
+|   ├── asset_directory/
+|   |   └── index.ts          # 资源说明插件(v3.x 专用功能)
 │   └── business/
 │       └── my-feature.ts     # 业务逻辑（与版本无关）
+├── assets/                  # 通用脚本(v2.x 会直接复制到项目文件夹中)
 ├── dist/                     # 编译输出
 │   ├── v2/                   # v2.x 编译产物
 │   └── v3/                   # v3.x 编译产物
@@ -42,15 +45,19 @@ extensions_tools_universal/
 ## 核心设计模式
 
 ### 1. 抽象接口 (interfaces.ts)
+
 定义所有版本通用的接口，屏蔽版本差异。
 
 ### 2. 版本检测 (version-detector.ts)
+
 自动检测当前 Cocos Creator 版本，决定使用哪套适配器。
 
 ### 3. 工厂模式 (factory.ts)
+
 根据版本动态创建对应的适配器实例。
 
 ### 4. 适配器模式 (adapters/)
+
 将不同版本的 API 统一为相同接口。
 
 ## 使用方法

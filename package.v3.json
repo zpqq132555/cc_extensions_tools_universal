@@ -30,37 +30,12 @@
     "contributions": {
         "menu": [
             {
-                "path": "i18n:menu.panel/Extensions Tools",
-                "label": "Open Panel",
-                "message": "open-panel"
-            },
-            {
-                "path": "i18n:menu.develop/Extensions Tools",
-                "label": "Say Hello",
-                "message": "say-hello"
-            },
-            {
                 "path": "i18n:extensions_tools.develop",
                 "label": "i18n:extensions_tools.bundlePath",
                 "message": "bundlePath"
             }
         ],
         "messages": {
-            "open-panel": {
-                "methods": [
-                    "openPanel"
-                ]
-            },
-            "say-hello": {
-                "methods": [
-                    "sayHello"
-                ]
-            },
-            "clicked": {
-                "methods": [
-                    "clicked"
-                ]
-            },
             "bundlePath": {
                 "methods": [
                     "bundlePath"

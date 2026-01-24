@@ -5,12 +5,6 @@
     "author": "Developer",
     "main": "./dist/v2/main.js",
     "main-menu": {
-        "i18n:MAIN_MENU.package.title/extensions_tools/open": {
-            "message": "extensions_tools:open"
-        },
-        "i18n:MAIN_MENU.package.title/extensions_tools/hello": {
-            "message": "extensions_tools:say-hello"
-        },
         "i18n:extensions_tools.develop/i18n:extensions_tools.bundlePath": {
             "message": "extensions_tools:bundlePath"
         }
@@ -21,17 +15,6 @@
         "title": "extensions_tools",
         "width": 400,
         "height": 300
-    },
-    "inspector": {
-        "asset.folder": "./dist/v2/asset_directory/index.v2.js"
-    },
-    "contributions": {
-        "database": [
-            {
-                "name": "extensions_tools",
-                "path": "./assets"
-            }
-        ]
     },
     "devDependencies": {
         "@types/node": "^18.17.1",
