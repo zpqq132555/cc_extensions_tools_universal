@@ -3,7 +3,7 @@
     "name": "extensions_tools",
     "version": "1.0.0",
     "description": "Cross-version Cocos Creator extension",
-    "author": "Developer",
+    "author": "oldP",
     "editor": ">=3.0.0",
     "main": "./dist/v3/main.js",
     "scripts": {

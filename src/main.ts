@@ -3,7 +3,6 @@
  * 这是一个兼容 v2.x 和 v3.x 的入口
  */
 
-import { existsSync, unlinkSync } from 'fs';
 import path from 'path';
 import { BundlePath } from './business/BundlePath';
 import { BasePlugin, createPluginMain, MessageMethod } from './index';
@@ -24,32 +23,46 @@ class ExtensionsToolsPlugin extends BasePlugin {
         this.log(`${this.pluginName} loaded successfully!`);
         this.log(`Cocos Creator Version: ${this.editor.getVersion()}`);
         this.log(`Running in ${this.isV2 ? 'v2.x' : 'v3.x'} mode`);
-        this.updateV2Script();
+        this.syncExtensionScripts();
     }
 
     unload(): void {
         this.log(`${this.pluginName} unloaded.`);
     }
 
-    private updateV2Script(): void {
+    /**
+     * 同步扩展脚本（双向同步）
+     * 
+     * V3 版本：通过 package.v3.json 的 asset-db.mount 配置自动挂载
+     * V2 版本：手动将插件 assets 目录与项目的 extensionScripts 目录双向同步
+     */
+    private syncExtensionScripts(): void {
+        // V3 版本通过 asset-db.mount 自动挂载，无需手动同步
         if (!this.isV2) return;
-        const scriptPath = path.join(this.editor.getProjectPath(), "assets", "extensionScripts");
-        const destPath = path.join(this.editor.getPackagePath(this.pluginName), "assets");
-        if (existsSync(scriptPath)) {
-            Tools.CopyDirSync(scriptPath, destPath);
-            const metaArr: Array<string> = [];
-            Tools.ReadDir(destPath, (filePath: string, fileName: string) => {
-                if (fileName.endsWith(".meta")) {
-                    metaArr.push(path.join(filePath, fileName));
-                }
+
+        const pluginAssetsPath = path.join(this.editor.getPackagePath(this.pluginName), "assets");
+        const projectScriptsPath = path.join(this.editor.getProjectPath(), "assets", "extensionScripts");
+
+        // 使用通用双向同步工具
+        const result = Tools.BidirectionalSync(pluginAssetsPath, projectScriptsPath, {
+            ignorePatterns: ['.meta', '.git', '.DS_Store'],
+            deletePatterns: ['.meta'],
+            preferDir: 'auto',
+            onLog: (msg) => this.log(msg),
+            onWarn: (msg) => this.warn(msg),
+            onError: (msg) => this.error(msg)
+        });
+
+        // 如果同步到项目，刷新资源数据库
+        if (result.synced && result.direction === 'A_to_B') {
+            this.asset.refresh("db://assets/extensionScripts").catch(err => {
+                this.warn("Failed to refresh asset database: " + err);
             });
-            // 删除 meta 文件
-            for (const metaFile of metaArr) {
-                unlinkSync(metaFile);
-            }
-            this.log("Extension scripts updated for v2.x successfully.");
-        } else {
-            Tools.CopyDirSync(destPath, scriptPath);
+        }
+
+        // 如果同步到插件，提示用户提交 git
+        if (result.synced && result.direction === 'B_to_A') {
+            this.log("You can now commit the changes to the git submodule.");
         }
     }
 

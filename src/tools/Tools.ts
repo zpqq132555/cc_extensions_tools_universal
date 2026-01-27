@@ -236,4 +236,246 @@ export class Tools {
         return true;
     }
 
+    /**
+     * 递归获取目录的最新修改时间
+     * @param dirPath 目录路径
+     * @param ignorePatterns 忽略的文件/文件夹模式（如 ['.meta', '.git']）
+     * @returns 最新修改时间戳（毫秒），目录不存在返回 0
+     */
+    public static GetDirectoryModifyTime(dirPath: string, ignorePatterns: string[] = ['.meta', '.git', '.DS_Store']): number {
+        if (!fs.existsSync(dirPath)) return 0;
+
+        let latestTime = 0;
+
+        const processDir = (dir: string) => {
+            try {
+                const stat = fs.statSync(dir);
+                if (stat.mtimeMs > latestTime) {
+                    latestTime = stat.mtimeMs;
+                }
+
+                if (stat.isDirectory()) {
+                    const items = fs.readdirSync(dir);
+                    for (const item of items) {
+                        // 检查是否匹配忽略模式
+                        const shouldIgnore = ignorePatterns.some(pattern => {
+                            if (pattern.startsWith('.')) {
+                                // 后缀匹配或前缀匹配
+                                return item.endsWith(pattern) || item.startsWith(pattern);
+                            }
+                            return item === pattern;
+                        });
+                        if (shouldIgnore) continue;
+
+                        const fullPath = path.join(dir, item);
+                        try {
+                            const fileStat = fs.statSync(fullPath);
+                            if (fileStat.mtimeMs > latestTime) {
+                                latestTime = fileStat.mtimeMs;
+                            }
+                            if (fileStat.isDirectory()) {
+                                processDir(fullPath);
+                            }
+                        } catch (e) {
+                            // 忽略
+                        }
+                    }
+                }
+            } catch (e) {
+                // 忽略
+            }
+        };
+
+        processDir(dirPath);
+        return latestTime;
+    }
+
+    /**
+     * 删除目录下匹配指定模式的文件
+     * @param dirPath 目录路径
+     * @param patterns 要删除的文件模式（如 ['.meta']）
+     */
+    public static DeleteFilesByPattern(dirPath: string, patterns: string[]): void {
+        if (!fs.existsSync(dirPath)) return;
+
+        const filesToDelete: string[] = [];
+        this.ReadDir(dirPath, (filePath: string, fileName: string) => {
+            const shouldDelete = patterns.some(pattern => {
+                if (pattern.startsWith('.')) {
+                    return fileName.endsWith(pattern);
+                }
+                return fileName === pattern;
+            });
+            if (shouldDelete) {
+                filesToDelete.push(path.join(filePath, fileName));
+            }
+        });
+
+        for (const file of filesToDelete) {
+            try {
+                fs.unlinkSync(file);
+            } catch (e) {
+                // 忽略删除失败
+            }
+        }
+    }
+
+    /**
+     * 双向同步两个目录
+     * 根据修改时间自动判断同步方向，将较新的目录内容同步到较旧的目录
+     * 
+     * @param dirA 目录 A 路径
+     * @param dirB 目录 B 路径
+     * @param options 同步选项
+     * @returns 同步结果
+     */
+    public static BidirectionalSync(
+        dirA: string,
+        dirB: string,
+        options: IBidirectionalSyncOptions = {}
+    ): IBidirectionalSyncResult {
+        const {
+            ignorePatterns = ['.meta', '.git', '.DS_Store'],
+            deletePatterns = ['.meta'],
+            preferDir = 'auto',
+            onLog = console.log,
+            onWarn = console.warn,
+            onError = console.error
+        } = options;
+
+        const result: IBidirectionalSyncResult = {
+            synced: false,
+            direction: 'none',
+            sourceDir: '',
+            targetDir: '',
+            message: ''
+        };
+
+        // 检查目录 A 是否存在
+        const dirAExists = fs.existsSync(dirA);
+        const dirBExists = fs.existsSync(dirB);
+
+        if (!dirAExists && !dirBExists) {
+            result.message = "Both directories do not exist.";
+            onWarn(result.message);
+            return result;
+        }
+
+        // 获取两个目录的修改时间
+        const timeA = dirAExists ? this.GetDirectoryModifyTime(dirA, ignorePatterns) : 0;
+        const timeB = dirBExists ? this.GetDirectoryModifyTime(dirB, ignorePatterns) : 0;
+
+        // 判断同步方向
+        let sourceDir: string;
+        let targetDir: string;
+        let direction: 'A_to_B' | 'B_to_A' | 'none';
+
+        if (!dirAExists) {
+            // A 不存在，从 B 同步到 A
+            sourceDir = dirB;
+            targetDir = dirA;
+            direction = 'B_to_A';
+            result.message = `Directory A not found, syncing from B to A...`;
+        } else if (!dirBExists) {
+            // B 不存在，从 A 同步到 B
+            sourceDir = dirA;
+            targetDir = dirB;
+            direction = 'A_to_B';
+            result.message = `Directory B not found, syncing from A to B...`;
+        } else if (preferDir === 'A') {
+            // 强制使用 A
+            sourceDir = dirA;
+            targetDir = dirB;
+            direction = 'A_to_B';
+            result.message = `Forced sync from A to B...`;
+        } else if (preferDir === 'B') {
+            // 强制使用 B
+            sourceDir = dirB;
+            targetDir = dirA;
+            direction = 'B_to_A';
+            result.message = `Forced sync from B to A...`;
+        } else if (timeA > timeB) {
+            // A 更新，从 A 同步到 B
+            sourceDir = dirA;
+            targetDir = dirB;
+            direction = 'A_to_B';
+            result.message = `Directory A is newer, syncing to B...`;
+        } else if (timeB > timeA) {
+            // B 更新，从 B 同步到 A
+            sourceDir = dirB;
+            targetDir = dirA;
+            direction = 'B_to_A';
+            result.message = `Directory B is newer, syncing to A...`;
+        } else {
+            // 时间相同，无需同步
+            result.message = "Directories are up to date.";
+            result.direction = 'none';
+            onLog(result.message);
+            return result;
+        }
+
+        onLog(result.message);
+
+        try {
+            // 执行同步
+            this.CopyDirSync(sourceDir, targetDir);
+
+            // 删除指定模式的文件
+            if (deletePatterns.length > 0) {
+                this.DeleteFilesByPattern(targetDir, deletePatterns);
+            }
+
+            result.synced = true;
+            result.direction = direction;
+            result.sourceDir = sourceDir;
+            result.targetDir = targetDir;
+            result.message = `Synced successfully: ${sourceDir} → ${targetDir}`;
+            onLog(result.message);
+        } catch (e) {
+            result.message = `Sync failed: ${e}`;
+            onError(result.message);
+        }
+
+        return result;
+    }
+
+}
+
+/**
+ * 双向同步选项
+ */
+export interface IBidirectionalSyncOptions {
+    /** 计算修改时间时忽略的文件模式，默认 ['.meta', '.git', '.DS_Store'] */
+    ignorePatterns?: string[];
+    /** 同步后要删除的文件模式，默认 ['.meta'] */
+    deletePatterns?: string[];
+    /** 
+     * 优先使用的目录
+     * - 'auto': 自动根据修改时间判断（默认）
+     * - 'A': 强制使用目录 A 作为源
+     * - 'B': 强制使用目录 B 作为源
+     */
+    preferDir?: 'auto' | 'A' | 'B';
+    /** 日志回调 */
+    onLog?: (message: string) => void;
+    /** 警告回调 */
+    onWarn?: (message: string) => void;
+    /** 错误回调 */
+    onError?: (message: string) => void;
+}
+
+/**
+ * 双向同步结果
+ */
+export interface IBidirectionalSyncResult {
+    /** 是否执行了同步 */
+    synced: boolean;
+    /** 同步方向 */
+    direction: 'A_to_B' | 'B_to_A' | 'none';
+    /** 源目录 */
+    sourceDir: string;
+    /** 目标目录 */
+    targetDir: string;
+    /** 结果消息 */
+    message: string;
 }

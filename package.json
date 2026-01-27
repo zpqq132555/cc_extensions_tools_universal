@@ -2,7 +2,7 @@
     "name": "extensions_tools",
     "version": "1.0.0",
     "description": "Cross-version Cocos Creator extension",
-    "author": "Developer",
+    "author": "oldP",
     "main": "./dist/v2/main.js",
     "main-menu": {
         "i18n:extensions_tools.develop/i18n:extensions_tools.bundlePath": {
