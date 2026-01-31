@@ -49,6 +49,17 @@ export class Tools {
             if (fs.statSync(srcPath).isDirectory()) {
                 this.CopyDirSync(srcPath, destPath, isShowLog);
             } else {
+                // 比对两个文件的内容，相同则跳过
+                const srcContent = fs.readFileSync(srcPath);
+                if (fs.existsSync(destPath)) {
+                    const destContent = fs.readFileSync(destPath);
+                    if (srcContent.equals(destContent)) {
+                        if (isShowLog) {
+                            console.log(`Skipping identical file: ${srcPath}`);
+                        }
+                        continue;
+                    }
+                }
                 fs.copyFileSync(srcPath, destPath);
             }
         }
