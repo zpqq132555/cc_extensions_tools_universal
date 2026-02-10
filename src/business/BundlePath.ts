@@ -74,8 +74,11 @@ export class BundlePath {
 
     /** 写入文件 */
     private writeFile(): void {
+        let bundleStr = "";
         // 生成配置字符串
-        let bundleStr = '\n    "RESOURCES" = "resources",';
+        if (isV2()) {
+            bundleStr += '\n    "RESOURCES" = "resources",';
+        }
         this.bundleArr.forEach(bundleName => {
             bundleStr += `\n    "${bundleName.toUpperCase()}" = "${bundleName}",`;
         });
