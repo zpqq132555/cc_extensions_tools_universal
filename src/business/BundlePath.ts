@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { getEditor, isV2 } from "..";
+import { getAsset, getEditor, isV2 } from "..";
 
 /**
  * @author OldPoint
@@ -89,11 +89,11 @@ export const AssetPath = ${JSON.stringify(this.bundleObj, null, 4)}`;
         if (!fs.existsSync(baseDir)) {
             fs.mkdirSync(baseDir, { recursive: true });
         }
-        
+
         const filePath = path.join(baseDir, 'BundleAssetsConfig.ts');
         // 直接写入文件，如果存在则覆盖
         fs.writeFileSync(filePath, newString, 'utf-8');
-
+        getAsset().refresh("assets/scripts/BundleAssetsConfig.ts");
         this.editor.log(this.logTitle, "生成路径映射成功");
     }
 
