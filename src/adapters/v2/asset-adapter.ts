@@ -27,7 +27,8 @@ export class AssetAdapterV2 implements IAssetAdapter {
 
     async queryAssetByPath(path: string): Promise<IAssetInfo | null> {
         return new Promise((resolve) => {
-            Editor.assetdb.queryAssets(path, null, (error: any, results: any[]) => {
+            const dbPath = path.startsWith('db://') ? path : `db://${path}`;
+            Editor.assetdb.queryAssets(dbPath, null, (error: any, results: any[]) => {
                 if (error || !results || results.length === 0) {
                     resolve(null);
                     return;
@@ -46,7 +47,8 @@ export class AssetAdapterV2 implements IAssetAdapter {
 
     async refresh(path: string): Promise<void> {
         return new Promise((resolve, reject) => {
-            Editor.assetdb.refresh(path, (error: any) => {
+            const dbPath = path.startsWith('db://') ? path : `db://${path}`;
+            Editor.assetdb.refresh(dbPath, (error: any) => {
                 if (error) {
                     reject(error);
                 } else {
@@ -71,7 +73,8 @@ export class AssetAdapterV2 implements IAssetAdapter {
 
     async delete(path: string): Promise<void> {
         return new Promise((resolve, reject) => {
-            Editor.assetdb.delete(path, (error: any) => {
+            const dbPath = path.startsWith('db://') ? path : `db://${path}`;
+            Editor.assetdb.delete(dbPath, (error: any) => {
                 if (error) {
                     reject(error);
                 } else {

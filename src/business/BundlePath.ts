@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { getAsset, getEditor, isV2 } from "..";
+import { getEditor, isV2 } from "..";
 
 /**
  * @author OldPoint
@@ -75,11 +75,9 @@ export class BundlePath {
     /** 写入文件 */
     private writeFile(): void {
         // 生成配置字符串
-        let bundleStr = "";
+        let bundleStr = '\n    "RESOURCES" = "resources",';
         this.bundleArr.forEach(bundleName => {
-            if (bundleName != "resources") {
-                bundleStr += `\n    "${bundleName.toUpperCase()}" = "${bundleName}",`;
-            }
+            bundleStr += `\n    "${bundleName.toUpperCase()}" = "${bundleName}",`;
         });
         const newString = `/** 插件自动生成,请勿修改 */
 export enum BundleName {${bundleStr}
@@ -91,7 +89,10 @@ export const AssetPath = ${JSON.stringify(this.bundleObj, null, 4)}`;
         if (!fs.existsSync(baseDir)) {
             fs.mkdirSync(baseDir, { recursive: true });
         }
-        getAsset().create('assets/scripts/BundleAssetsConfig.ts', newString);
+        
+        const filePath = path.join(baseDir, 'BundleAssetsConfig.ts');
+        // 直接写入文件，如果存在则覆盖
+        fs.writeFileSync(filePath, newString, 'utf-8');
 
         this.editor.log(this.logTitle, "生成路径映射成功");
     }
