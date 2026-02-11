@@ -1,62 +1,31 @@
 {
-    "package_version": 2,
     "name": "extensions_tools",
     "version": "1.0.0",
     "description": "Cross-version Cocos Creator extension",
     "author": "oldP",
-    "editor": ">=3.0.0",
-    "main": "./dist/v3/main.js",
-    "scripts": {
-        "preinstall": "node ./scripts/install.js",
-        "build": "npm run build:v2 && npm run build:v3",
-        "build:v2": "npx tsc -p tsconfig.v2.json",
-        "build:v3": "npx tsc -p tsconfig.v3.json",
-        "watch": "npx tsc -w"
+    "main": "./dist/v2/main.js",
+    "main-menu": {
+        "i18n:extensions_tools.develop/i18n:extensions_tools.bundlePath": {
+            "message": "extensions_tools:bundlePath"
+        }
+    },
+    "panel": {
+        "main": "./dist/v2/panels/default/index.js",
+        "type": "dockable",
+        "title": "extensions_tools",
+        "width": 400,
+        "height": 300
     },
     "devDependencies": {
         "@types/node": "^18.17.1",
         "typescript": "^5.0.0",
         "@cocos/creator-types": "^3.8.0"
     },
-    "panels": {
-        "default": {
-            "title": "Extensions Tools",
-            "type": "dockable",
-            "main": "./dist/v3/panels/default/index.js",
-            "size": {
-                "min-width": 400,
-                "min-height": 300,
-                "width": 600,
-                "height": 400
-            }
-        }
-    },
-    "contributions": {
-        "menu": [
-            {
-                "path": "i18n:extensions_tools.develop",
-                "label": "i18n:extensions_tools.bundlePath",
-                "message": "bundlePath"
-            }
-        ],
-        "messages": {
-            "bundlePath": {
-                "methods": [
-                    "bundlePath"
-                ]
-            }
-        },
-        "asset-db": {
-            "mount": {
-                "path": "./assets"
-            }
-        }
-    },
-    "inspector": {
-        "section": {
-            "asset": {
-                "directory": "./dist/v3/asset_directory/index.js"
-            }
-        }
+    "scripts": {
+        "preinstall": "node ./scripts/install.js",
+        "build": "npm run build:v2 && npm run build:v3",
+        "build:v2": "npx tsc -p tsconfig.v2.json",
+        "build:v3": "npx tsc -p tsconfig.v3.json",
+        "watch": "npx tsc -w"
     }
 }
