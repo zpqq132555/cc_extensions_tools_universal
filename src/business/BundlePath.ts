@@ -86,7 +86,9 @@ export class BundlePath {
 export enum BundleName {${bundleStr}
 }
 /** 资源映射,插件自动生成,请勿修改 */
-export const AssetPath = ${JSON.stringify(this.bundleObj, null, 4)}`;
+export const AssetPath = ${JSON.stringify(this.bundleObj, null, 4)}
+/** 根据资源映射的路径，返回文件夹路径，插件自动生成,请勿修改 */
+export const GetDirPath = (path: Record<string, any>): string => { return Object.values(path)[0].split('/').slice(0, -1).join('/'); }`;
 
         const baseDir = path.join(this.editor.getProjectPath(), "assets", "scripts");
         if (!fs.existsSync(baseDir)) {
