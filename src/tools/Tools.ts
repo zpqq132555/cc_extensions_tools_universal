@@ -60,7 +60,11 @@ export class Tools {
                         continue;
                     }
                 }
-                fs.copyFileSync(srcPath, destPath);
+                this.WriteFileSync(destPath, srcContent);
+                if (isShowLog) {
+                    console.log(`Copied file: ${srcPath} → ${destPath}`);
+                }
+                // fs.copyFileSync(srcPath, destPath);
             }
         }
     }
