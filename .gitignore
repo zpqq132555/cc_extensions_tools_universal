@@ -9,7 +9,7 @@ dist/
 # 系统文件
 .DS_Store
 Thumbs.db
-
+.cocos-version
 # 临时文件
 *.log
 *.tmp
