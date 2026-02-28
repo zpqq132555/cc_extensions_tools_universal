@@ -101,4 +101,46 @@ export class ArrayUtil {
         return false;
     }
 
+    /**
+     * 比较两个数组，看它们是否具有相同的元素以及相同的出现频率。
+     *
+     * 行为说明（保持原有语义）：
+     * - 在计数时，元素会被转换为字符串键（与使用对象属性查找相同）。这意味着非原始对象可能会通过它们的字符串表示进行比较（例如 `[object Object]`）。
+     * - 比较不考虑顺序，但计数必须完全匹配。
+     *
+     * @param arr1 第一个要比较的数组
+     * @param arr2 第二个要比较的数组
+     * @returns 如果两个数组包含相同的多重集合元素，则返回 true，否则返回 false
+     *
+     * 示例：
+     * ArrayUtil.CompareArr([1,2,2], [2,1,2]) === true
+     * ArrayUtil.CompareArr(['a','a','b'], ['a','b','b']) === false
+     */
+    public static CompareArr<T>(arr1: Array<T>, arr2: Array<T>): boolean {
+        if (!arr1 || !arr2 || arr1.length !== arr2.length) return false;
+
+        // 使用字符串化的键以保持原有行为（对象属性键）
+        const counts1: Record<string, number> = {};
+        const counts2: Record<string, number> = {};
+
+        for (let i = 0; i < arr1.length; i++) {
+            const key = String(arr1[i]);
+            counts1[key] = (counts1[key] || 0) + 1;
+        }
+
+        for (let i = 0; i < arr2.length; i++) {
+            const key = String(arr2[i]);
+            counts2[key] = (counts2[key] || 0) + 1;
+        }
+
+        const keys1 = Object.keys(counts1);
+        if (keys1.length !== Object.keys(counts2).length) return false;
+
+        for (let i = 0; i < keys1.length; i++) {
+            const k = keys1[i];
+            if (counts1[k] !== counts2[k]) return false;
+        }
+        return true;
+    }
+
 }
