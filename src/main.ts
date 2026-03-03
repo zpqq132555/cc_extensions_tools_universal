@@ -40,8 +40,16 @@ class ExtensionsToolsPlugin extends BasePlugin {
         // V3 版本通过 asset-db.mount 自动挂载，无需手动同步
         if (!this.isV2) return;
 
-        const pluginAssetsPath = path.join(this.editor.getPackagePath(this.pluginName), "assets");
-        const projectScriptsPath = path.join(this.editor.getProjectPath(), "assets", "extensionScripts");
+        const pluginPackagePath = this.editor.getPackagePath(this.pluginName);
+        const projectPath = this.editor.getProjectPath();
+
+        if (!pluginPackagePath || !projectPath) {
+            this.warn('[syncExtensionScripts] plugin package path or project path is unavailable, skipping sync');
+            return;
+        }
+
+        const pluginAssetsPath = path.join(pluginPackagePath, "assets");
+        const projectScriptsPath = path.join(projectPath, "assets", "extensionScripts");
 
         // 使用通用双向同步工具
         const result = Tools.BidirectionalSync(pluginAssetsPath, projectScriptsPath, {
