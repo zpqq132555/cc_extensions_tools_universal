@@ -88,7 +88,13 @@ export enum BundleName {${bundleStr}
 /** 资源映射,插件自动生成,请勿修改 */
 export const AssetPath = ${JSON.stringify(this.bundleObj, null, 4)}
 /** 根据资源映射的路径，返回文件夹路径，插件自动生成,请勿修改 */
-export const GetDirPath = (path: Record<string, any>): string => { return Object.values(path)[0].split('/').slice(0, -1).join('/'); }`;
+/**  
+ * 根据资源映射的路径，返回文件夹路径，插件自动生成,请勿修改
+ * @param path 资源映射对象中的某个路径对象，例如AssetPath.game.audios.bgm
+ * @param fileName 可选参数，如果传入文件名，则返回文件夹路径加上文件名，否则只返回文件夹路径
+ * @returns 文件夹路径，格式为 "path/to/folder" 或 "path/to/folder/filename"
+ */
+export const GetDirPath = (path: Record<string, any>, fileName?: string): string => { return Object.values(path)[0].split('/').slice(0, -1).join('/') + (fileName ? '/' + fileName : ''); }`;
 
         const baseDir = path.join(this.editor.getProjectPath(), "assets", "scripts");
         if (!fs.existsSync(baseDir)) {
