@@ -77,10 +77,10 @@ export class BundlePath {
         let bundleStr = "";
         // 生成配置字符串
         if (isV2()) {
-            bundleStr += '\n    "RESOURCES" = "resources",';
+            bundleStr += '\n    RESOURCES = "resources",';
         }
         this.bundleArr.forEach(bundleName => {
-            bundleStr += `\n    "${bundleName.toUpperCase()}" = "${bundleName}",`;
+            bundleStr += `\n    ${bundleName.toUpperCase()} = "${bundleName}",`;
         });
         const newString = `/** 插件自动生成,请勿修改 */
 export enum BundleName {${bundleStr}
